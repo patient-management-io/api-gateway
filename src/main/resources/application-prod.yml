@@ -5,6 +5,11 @@ spring:
   application:
     name: api-gateway
 
+  data:
+    redis:
+      host: ${REDIS_HOST:redis}
+      port: ${REDIS_PORT:6379}
+
   cloud:
     gateway:
       server:
@@ -12,14 +17,14 @@ spring:
           routes:
             # Route for /auth/** to auth-service
             - id: auth-service-route
-              uri: http://host.docker.internal:4005
+              uri: http://auth-service.patient-management.local:4005
               predicates:
                 - Path=/auth/**
               filters:
                 - StripPrefix=1
             # Route for /api/docs/auth to auth-service /v3/api-docs
             - id: api-docs-auth-route
-              uri: http://host.docker.internal:4005
+              uri: http://auth-service.patient-management.local:4005
               predicates:
                 - Path=/api-docs/auth
               filters:
@@ -27,7 +32,7 @@ spring:
 
             # Route for /api/patients** to patient-service
             - id: patient-service-route
-              uri: http://host.docker.internal:4000
+              uri: http://patient-service.patient-management.local:4000
               predicates:
                 - Path=/api/patients/**
               filters:
@@ -35,7 +40,7 @@ spring:
                 - JwtValidation
             # Route for /api/docs/patients to patient-service /v3/api-docs
             - id: api-docs-patient-route
-              uri: http://host.docker.internal:4000
+              uri: http://patient-service.patient-management.local:4000
               predicates:
                 - Path=/api-docs/patients
               filters:
